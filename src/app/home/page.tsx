@@ -22,24 +22,27 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function Home() {
-  const { isAuthenticated } = useAuth();
+  const { accessToken, logout, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!loading && !accessToken) {
       router.replace("/login");
     }
-  }, [isAuthenticated]);
+  }, [accessToken, loading]);
 
-  if (!isAuthenticated) {
-    <div className="fixed inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm z-50">
-      <div className="text-center">
-        <Loader2 className="h-12 w-12 animate-spin text-indigo-600 mx-auto" />
-        <p className="mt-4 text-lg font-medium text-gray-700">Redirecting...</p>
+  if (loading || !accessToken) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm z-50">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-indigo-600 mx-auto" />
+          <p className="mt-4 text-lg font-medium text-gray-700">
+            Redirecting...
+          </p>
+        </div>
       </div>
-    </div>;
+    );
   }
-
   const currentUser = {
     name: "Alex Johnson",
     avatar: "/avatars/01.png",
@@ -127,7 +130,7 @@ export default function Home() {
               </TooltipTrigger>
               <TooltipContent>Settings</TooltipContent>
             </Tooltip>
-            <Button variant="outline">
+            <Button variant="outline" onClick={logout}>
               <LogOut className="h-5 w-5 mr-2" />
               <span className="hidden md:inline">Logout</span>
             </Button>
