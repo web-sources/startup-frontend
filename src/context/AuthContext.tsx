@@ -2,37 +2,64 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-const AuthContext = createContext({
-  isAuthenticated: false,
+type AuthContextType = {
+  accessToken: string | null;
+  login: (
+    access: string,
+  ) => void;
+  logout: () => void;
+  loading: boolean; // 🆕 loading state
+};
+
+const AuthContext = createContext<AuthContextType>({
+  accessToken: null,
   login: () => {},
   logout: () => {},
+  loading : true, // 🆕 loading state
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true); // 🆕 loading state
+
 
   useEffect(() => {
-    // Simulate session check — replace with cookie/token check
-    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-    console.log("Logged in status:", loggedIn);
-    setIsAuthenticated(loggedIn);
+    const access = localStorage.getItem("accessToken");
+
+    if (access) {
+      setAccessToken(access);
+    }
+    setLoading(false);
   }, []);
 
-  const login = () => {
-    localStorage.setItem("isLoggedIn", "true");
-    setIsAuthenticated(true);
+  const login = (
+    access: string,
+  ) => {
+    setAccessToken(access);
+    localStorage.setItem("accessToken", access);
   };
 
   const logout = () => {
-    localStorage.removeItem("isLoggedIn");
-    setIsAuthenticated(false);
+    localStorage.clear();
+    setAccessToken(null);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        accessToken,
+        login,
+        logout,
+        loading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("useAuth must be used within an AuthProvider");
+  return context;
+};

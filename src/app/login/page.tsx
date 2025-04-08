@@ -19,6 +19,8 @@ import { Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 // Zod schema for validation
 const formSchema = z.object({
@@ -31,14 +33,14 @@ const formSchema = z.object({
 });
 
 export default function LoginPage() {
-  const { isAuthenticated, login } = useAuth();
+  const { accessToken, login } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (accessToken) {
       router.push("/home");
     }
-  }, [isAuthenticated]);
+  }, [accessToken]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -50,10 +52,35 @@ export default function LoginPage() {
 
   const { isSubmitting } = form.formState;
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    login();
-    console.log("Form submitted:", values);
-  }
+  //login();
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    try {
+      const response = await axios.post(
+        "https://9f3c-103-240-169-156.ngrok-free.app/api/v1/startup/auth/login/",
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+
+      if(response.status === 200) {
+        toast.success(response.data.data || "Login successful!");
+        console.log(response);  
+        const access = response?.data?.token?.access;
+        login(access); 
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.error || "Login failed. Please try again.");
+      } else {
+        console.log(error);
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-white flex items-center justify-center p-4">
