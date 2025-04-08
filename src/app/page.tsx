@@ -1,103 +1,165 @@
-import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { LogOut, MessageSquare, Phone, Settings, Users, Video } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Card } from "@/components/ui/card";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  // Mock user data (replace with your auth provider)
+  const currentUser = {
+    name: "Alex Johnson",
+    avatar: "/avatars/01.png",
+    status: "online",
+  };
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const recentCalls = [
+    { id: 1, name: "Team Meeting", type: "group", time: "2h ago" },
+    { id: 2, name: "Sarah Miller", type: "private", time: "Yesterday" }
+  ];
+
+  const contacts = [
+    { id: 1, name: "Sarah Miller", status: "online", avatar: "/avatars/02.png" },
+    { id: 2, name: "Michael Chen", status: "offline", avatar: "/avatars/03.png" }
+  ];
+
+  return (
+    <div className="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="w-20 md:w-64 bg-white border-r border-gray-200 flex flex-col">
+        <div className="p-4 border-b border-gray-200 flex justify-center md:justify-start">
+          <h1 className="text-xl font-bold hidden md:block text-indigo-600">
+            VideoConnect
+          </h1>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <nav className="flex-1 p-2 space-y-1">
+          <Button
+            variant="ghost"
+            className="w-full justify-center md:justify-start"
+          >
+            <Video className="h-5 w-5 mr-0 md:mr-3" />
+            <span className="hidden md:inline">New Call</span>
+          </Button>
+          <Button
+            variant="ghost"
+            className="w-full justify-center md:justify-start"
+          >
+            <Users className="h-5 w-5 mr-0 md:mr-3" />
+            <span className="hidden md:inline">Contacts</span>
+          </Button>
+          <Button
+            variant="ghost"
+            className="w-full justify-center md:justify-start"
+          >
+            <MessageSquare className="h-5 w-5 mr-0 md:mr-3" />
+            <span className="hidden md:inline">Messages</span>
+          </Button>
+        </nav>
+
+        <div className="p-4 border-t border-gray-200">
+          <div className="flex items-center space-x-2">
+            <Avatar>
+              <AvatarImage src={currentUser.avatar} />
+              <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <div className="hidden md:block">
+              <p className="font-medium">{currentUser.name}</p>
+              <p className="text-xs text-gray-500">{currentUser.status}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Top Bar */}
+        <header className="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
+          <h2 className="text-xl font-semibold">Dashboard</h2>
+          <div className="flex space-x-2">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <Settings className="h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Settings</TooltipContent>
+            </Tooltip>
+            <Button variant="outline">
+              <LogOut className="h-5 w-5 mr-2" />
+              <span className="hidden md:inline">Logout</span>
+            </Button>
+          </div>
+        </header>
+
+        
+        {/* Dashboard Grid */}
+        <main className="flex-1 overflow-y-auto p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Quick Actions Card */}
+            <Card className="p-6">
+              <h3 className="font-semibold text-lg mb-4">Start Conversation</h3>
+              <div className="space-y-3">
+                <Button className="w-full" variant="outline">
+                  <Phone className="h-5 w-5 mr-2" />
+                  Private Call
+                </Button>
+                <Button className="w-full">
+                  <Users className="h-5 w-5 mr-2" />
+                  Group Call
+                </Button>
+              </div>
+            </Card>
+
+            {/* Recent Calls */}
+            <Card className="p-6">
+              <h3 className="font-semibold text-lg mb-4">Recent Calls</h3>
+              <div className="space-y-4">
+                {recentCalls.map((call) => (
+                  <div key={call.id} className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className={`p-2 rounded-full ${call.type === 'group' ? 'bg-indigo-100 text-indigo-600' : 'bg-green-100 text-green-600'}`}>
+                        {call.type === 'group' ? <Users className="h-5 w-5" /> : <Phone className="h-5 w-5" />}
+                      </div>
+                      <div>
+                        <p className="font-medium">{call.name}</p>
+                        <p className="text-sm text-gray-500">{call.time}</p>
+                      </div>
+                    </div>
+                    <Button variant="ghost" size="sm">Join</Button>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Online Contacts */}
+            <Card className="p-6">
+              <h3 className="font-semibold text-lg mb-4">Online Contacts</h3>
+              <div className="space-y-4">
+                {contacts.map((contact) => (
+                  <div key={contact.id} className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <Avatar>
+                        <AvatarImage src={contact.avatar} />
+                        <AvatarFallback>{contact.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-medium">{contact.name}</p>
+                        <p className={`text-xs ${contact.status === 'online' ? 'text-green-500' : 'text-gray-500'}`}>
+                          {contact.status}
+                        </p>
+                      </div>
+                    </div>
+                    <Button variant="outline" size="sm">Call</Button>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
