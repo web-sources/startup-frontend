@@ -15,12 +15,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import ForgotPasswordModal from "./ForgotPasswordModal";
 
 // Zod schema for validation
 const formSchema = z.object({
@@ -35,6 +36,8 @@ const formSchema = z.object({
 export default function LoginPage() {
   const { accessToken, login } = useAuth();
   const router = useRouter();
+  const [showpassword, setShowpassword] = useState(false);
+  const [showForgotModal, setShowForgotModal] = useState(false);
 
   useEffect(() => {
     if (accessToken) {
@@ -57,7 +60,7 @@ export default function LoginPage() {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       const response = await axios.post(
-        "https://9f3c-103-240-169-156.ngrok-free.app/api/v1/startup/auth/login/",
+        "https://24cf-103-240-169-156.ngrok-free.app/api/v1/startup/auth/login/",
         data,
         {
           headers: {
@@ -67,15 +70,17 @@ export default function LoginPage() {
         }
       );
 
-      if(response.status === 200) {
+      if (response.status === 200) {
         toast.success(response.data.data || "Login successful!");
-        console.log(response);  
+        console.log(response);
         const access = response?.data?.token?.access;
-        login(access); 
+        login(access);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.error || "Login failed. Please try again.");
+        toast.error(
+          error.response?.data?.error || "Login failed. Please try again."
+        );
       } else {
         console.log(error);
       }
@@ -118,41 +123,59 @@ export default function LoginPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="••••••••"
-                        {...field}
-                        type="password"
-                        autoComplete="current-password"
-                      />
-                    </FormControl>
-                    <div className="flex justify-between items-center">
-                      <FormMessage />
-                      <Link
-                        href="/forgot-password"
-                        className="text-sm text-indigo-600 hover:underline"
+                    <div className="relative">
+                      <FormControl>
+                        <Input
+                          type={showpassword ? "text" : "password"}
+                          {...field}
+                        />
+                      </FormControl>
+                      <button
+                        type="button"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        onClick={() => setShowpassword(!showpassword)}
                       >
-                        Forgot password?
-                      </Link>
+                        {showpassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
+                      </button>
                     </div>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Logging in...
-                  </>
-                ) : (
-                  "Login"
-                )}
-              </Button>
+              <div className="space-y-2">
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Logging in...
+                    </>
+                  ) : (
+                    "Login"
+                  )}
+                </Button>
+
+                <Button
+                  variant="link"
+                  type="button"
+                  onClick={() => setShowForgotModal(true)}
+                  className="text-blue-500 hover:text-blue-600 text-sm px-0"
+                >
+                  Forgot Password?
+                </Button>
+              </div>
             </form>
           </Form>
 
-          <div className="relative my-6">
+          <div className="relative my-5">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t" />
             </div>
@@ -204,6 +227,11 @@ export default function LoginPage() {
           </div>
         </CardContent>
       </Card>
+
+      <ForgotPasswordModal
+        open={showForgotModal}
+        onOpenChange={setShowForgotModal}
+      />
     </div>
   );
 }

@@ -49,7 +49,7 @@ const formSchema = z
 const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const router = useRouter()
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -65,7 +65,7 @@ const RegisterPage = () => {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       const response = await axios.post(
-        "https://9f3c-103-240-169-156.ngrok-free.app/api/v1/startup/auth/register/",
+        "https://24cf-103-240-169-156.ngrok-free.app/api/v1/startup/auth/register/",
         data,
         {
           headers: {
@@ -76,7 +76,7 @@ const RegisterPage = () => {
       );
       if (response.status === 200) {
         toast.success(response.data.data || "Registration successful!");
-        router.push("/login")
+        router.push("/login");
       } else {
         toast.error("Registration failed. Please try again.");
       }
@@ -209,6 +209,10 @@ const RegisterPage = () => {
 
               <Button type="submit" className="w-full">
                 Register
+              </Button>
+
+              <Button type="button" onClick={() => router.push("/login")} className="w-full">
+                login
               </Button>
             </form>
           </Form>

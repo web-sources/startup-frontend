@@ -1,28 +1,17 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Loader2,
-  LogOut,
-  MessageSquare,
-  Phone,
-  Settings,
-  Users,
-  Video,
-} from "lucide-react";
+import { Loader2, MessageSquare, Phone, Users, Video } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import {} from "@/components/ui/tooltip";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import ProfileDropdown from "@/app/home/ProfileDropdown";
 
 export default function Home() {
-  const { accessToken, logout, loading } = useAuth();
+  const { accessToken, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -122,18 +111,7 @@ export default function Home() {
         <header className="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
           <h2 className="text-xl font-semibold">Dashboard</h2>
           <div className="flex space-x-2">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Settings className="h-5 w-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Settings</TooltipContent>
-            </Tooltip>
-            <Button variant="outline" onClick={logout}>
-              <LogOut className="h-5 w-5 mr-2" />
-              <span className="hidden md:inline">Logout</span>
-            </Button>
+            <ProfileDropdown />
           </div>
         </header>
 

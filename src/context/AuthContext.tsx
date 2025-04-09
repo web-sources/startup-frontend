@@ -22,7 +22,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true); // 🆕 loading state
 
-
   useEffect(() => {
     const access = localStorage.getItem("accessToken");
 
@@ -43,6 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.clear();
     setAccessToken(null);
   };
+  
 
   return (
     <AuthContext.Provider
