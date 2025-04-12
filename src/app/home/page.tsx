@@ -1,24 +1,40 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Loader2, MessageSquare, Phone, Users, Video } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {} from "@/components/ui/tooltip";
-import { Card } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import ProfileDropdown from "@/app/home/ProfileDropdown";
+import Sidebar from "./components/Sidebar";
+import { useRoomStore } from "@/stores/userRoomStore";
+import { BookOpen, Mic, Video, ShieldCheck, Users } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+
+const interestOptions = [
+  {
+    id: "dbac4910-103d-421d-a51d-3a1dbd2720f0",
+    name: "Book",
+  },
+  {
+    id: "6ee6d0d8-69eb-4655-a40a-3c467c63279f",
+    name: "Eating",
+  },
+];
 
 export default function Home() {
   const { accessToken, loading } = useAuth();
   const router = useRouter();
 
+  const rooms = useRoomStore((state) => state.rooms);
+
+  console.log(rooms);
+
   useEffect(() => {
     if (!loading && !accessToken) {
       router.replace("/login");
     }
-  }, [accessToken, loading]);
+  }, [accessToken, loading, router]);
 
   if (loading || !accessToken) {
     return (
@@ -32,181 +48,124 @@ export default function Home() {
       </div>
     );
   }
-  const currentUser = {
-    name: "Alex Johnson",
-    avatar: "/avatars/01.png",
-    status: "online",
-  };
 
-  const recentCalls = [
-    { id: 1, name: "Team Meeting", type: "group", time: "2h ago" },
-    { id: 2, name: "Sarah Miller", type: "private", time: "Yesterday" },
-  ];
-
-  const contacts = [
-    {
-      id: 1,
-      name: "Sarah Miller",
-      status: "online",
-      avatar: "/avatars/02.png",
-    },
-    {
-      id: 2,
-      name: "Michael Chen",
-      status: "offline",
-      avatar: "/avatars/03.png",
-    },
+  const bgGradients = [
+    "bg-gradient-to-r from-pink-200 via-white to-white",
+    "bg-gradient-to-r from-green-200 via-white to-white",
+    "bg-gradient-to-r from-yellow-200 via-white to-white",
+    "bg-gradient-to-r from-blue-200 via-white to-white",
+    "bg-gradient-to-r from-purple-200 via-white to-white",
   ];
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="w-20 md:w-64 bg-white border-r border-gray-200 flex flex-col">
-        <div className="p-4 border-b border-gray-200 flex justify-center md:justify-start">
-          <h1 className="text-xl font-bold hidden md:block text-indigo-600">
-            VideoConnect
-          </h1>
-        </div>
+      <Sidebar />
 
-        <nav className="flex-1 p-2 space-y-1">
-          <Button
-            variant="ghost"
-            className="w-full justify-center md:justify-start"
-          >
-            <Video className="h-5 w-5 mr-0 md:mr-3" />
-            <span className="hidden md:inline">New Call</span>
-          </Button>
-          <Button
-            variant="ghost"
-            className="w-full justify-center md:justify-start"
-          >
-            <Users className="h-5 w-5 mr-0 md:mr-3" />
-            <span className="hidden md:inline">Contacts</span>
-          </Button>
-          <Button
-            variant="ghost"
-            className="w-full justify-center md:justify-start"
-          >
-            <MessageSquare className="h-5 w-5 mr-0 md:mr-3" />
-            <span className="hidden md:inline">Messages</span>
-          </Button>
-        </nav>
-
-        <div className="p-4 border-t border-gray-200">
-          <div className="flex items-center space-x-2">
-            <Avatar>
-              <AvatarImage src={currentUser.avatar} />
-              <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <div className="hidden md:block">
-              <p className="font-medium">{currentUser.name}</p>
-              <p className="text-xs text-gray-500">{currentUser.status}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Bar */}
-        <header className="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
-          <h2 className="text-xl font-semibold">Dashboard</h2>
-          <div className="flex space-x-2">
-            <ProfileDropdown />
-          </div>
-        </header>
+        <div className="flex-1 overflow-y-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-3 overflow-y-auto">
+            {rooms.map((room, index) => (
+              <Card
+                key={index}
+                className="relative overflow-hidden rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300"
+              >
+                {/* Top section with background highlight */}
+                <div
+                  className={`p-2 ${bgGradients[index % bgGradients.length]}`}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    {/* Left Side: Room Name + Interests */}
+                    <div className="flex flex-col flex-1">
+                      <h2 className="text-xl font-bold text-gray-800 truncate">
+                        {room.name}
+                      </h2>
 
-        {/* Dashboard Grid */}
-        <main className="flex-1 overflow-y-auto p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Quick Actions Card */}
-            <Card className="p-6">
-              <h3 className="font-semibold text-lg mb-4">Start Conversation</h3>
-              <div className="space-y-3">
-                <Button className="w-full" variant="outline">
-                  <Phone className="h-5 w-5 mr-2" />
-                  Private Call
-                </Button>
-                <Button className="w-full">
-                  <Users className="h-5 w-5 mr-2" />
-                  Group Call
-                </Button>
-              </div>
-            </Card>
+                      {/* Interests */}
+                      <div className="mt-1 flex flex-wrap gap-2">
+                        {room.interests.map((id) => {
+                          const interest = interestOptions.find(
+                            (opt) => opt.id === id
+                          );
+                          return (
+                            <span
+                              key={id}
+                              className="inline-flex items-center gap-1 text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full"
+                            >
+                              <BookOpen className="w-3 h-3" />
+                              {interest?.name || "Unknown"}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-            {/* Recent Calls */}
-            <Card className="p-6">
-              <h3 className="font-semibold text-lg mb-4">Recent Calls</h3>
-              <div className="space-y-4">
-                {recentCalls.map((call) => (
-                  <div
-                    key={call.id}
-                    className="flex items-center justify-between"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div
-                        className={`p-2 rounded-full ${
-                          call.type === "group"
-                            ? "bg-indigo-100 text-indigo-600"
-                            : "bg-green-100 text-green-600"
-                        }`}
-                      >
-                        {call.type === "group" ? (
-                          <Users className="h-5 w-5" />
-                        ) : (
-                          <Phone className="h-5 w-5" />
+                {/* Divider */}
+                <div className="border-t border-gray-200" />
+
+                {/* Room Info */}
+                <CardContent className="space-y-3">
+                  {/* Room Type */}
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    {room.room_type === "audio" ? (
+                      <Mic className="w-4 h-4 text-emerald-500" />
+                    ) : (
+                      <Video className="w-4 h-4 text-pink-500" />
+                    )}
+                    {room.room_type.charAt(0).toUpperCase() +
+                      room.room_type.slice(1)}
+                  </div>
+
+                  {/* Privacy */}
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <ShieldCheck className="w-4 h-4 text-yellow-500" />
+                    {room.privacy.charAt(0).toUpperCase() +
+                      room.privacy.slice(1)}
+                  </div>
+
+                  {/* Participants */}
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Users className="w-4 h-4 text-blue-500" />
+                    {(room.participants ?? []).length > 0 ? (
+                      <div className="flex -space-x-2 overflow-hidden">
+                        {(room.participants ?? [])
+                          .slice(0, 3)
+                          .map((p: any, index: number) => (
+                            <Avatar
+                              key={index}
+                              className="h-7 w-7 border-2 border-white hover:z-10 transition-transform hover:scale-105"
+                            >
+                              <AvatarFallback className="text-xs bg-gray-200 text-gray-700">
+                                {p.name?.[0]?.toUpperCase() || "U"}
+                              </AvatarFallback>
+                            </Avatar>
+                          ))}
+                        {(room.participants ?? []).length > 3 && (
+                          <div className="text-xs text-gray-500 ml-2">
+                            +{(room.participants ?? []).length - 3}
+                          </div>
                         )}
                       </div>
-                      <div>
-                        <p className="font-medium">{call.name}</p>
-                        <p className="text-sm text-gray-500">{call.time}</p>
-                      </div>
-                    </div>
-                    <Button variant="ghost" size="sm">
-                      Join
-                    </Button>
+                    ) : (
+                      <span className="text-gray-400">No participants</span>
+                    )}
                   </div>
-                ))}
-              </div>
-            </Card>
+                </CardContent>
 
-            {/* Online Contacts */}
-            <Card className="p-6">
-              <h3 className="font-semibold text-lg mb-4">Online Contacts</h3>
-              <div className="space-y-4">
-                {contacts.map((contact) => (
-                  <div
-                    key={contact.id}
-                    className="flex items-center justify-between"
+                {/* Action button at the bottom */}
+                <div className="px-5 pb-5">
+                  <Button
+                    className="w-full mt-3 hover:bg-indigo-600 hover:text-white transition cursor-pointer"
+                    variant="outline"
                   >
-                    <div className="flex items-center space-x-3">
-                      <Avatar>
-                        <AvatarImage src={contact.avatar} />
-                        <AvatarFallback>
-                          {contact.name.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-medium">{contact.name}</p>
-                        <p
-                          className={`text-xs ${
-                            contact.status === "online"
-                              ? "text-green-500"
-                              : "text-gray-500"
-                          }`}
-                        >
-                          {contact.status}
-                        </p>
-                      </div>
-                    </div>
-                    <Button variant="outline" size="sm">
-                      Call
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </Card>
+                    {"Join Now"}
+                  </Button>
+                </div>
+              </Card>
+            ))}
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );

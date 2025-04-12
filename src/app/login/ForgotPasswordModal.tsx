@@ -8,7 +8,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"; // your path
+} from "@/components/ui/dialog";
 import {
   Form,
   FormField,
@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 
 import * as z from "zod";
+import { BASE_URL } from "@/utils/config";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -44,7 +45,7 @@ const ForgotPasswordModal = ({
   const onSubmit = async (values: { email: string }) => {
     try {
       const response = await axios.post(
-        "https://24cf-103-240-169-156.ngrok-free.app/api/v1/startup/auth/password-reset/",
+        `${BASE_URL}/api/v1/startup/auth/password-reset/`,
         values,
         {
           headers: {

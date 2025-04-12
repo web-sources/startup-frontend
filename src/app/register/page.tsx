@@ -22,6 +22,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
+import { BASE_URL } from "@/utils/config";
+
 const formSchema = z
   .object({
     first_name: z.string().min(2, {
@@ -65,7 +67,7 @@ const RegisterPage = () => {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       const response = await axios.post(
-        "https://24cf-103-240-169-156.ngrok-free.app/api/v1/startup/auth/register/",
+        `${BASE_URL}/api/v1/startup/auth/register/`,
         data,
         {
           headers: {
