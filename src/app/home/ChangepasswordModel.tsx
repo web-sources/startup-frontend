@@ -26,6 +26,8 @@ import { useAuth } from "@/context/AuthContext";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
+import  { BASE_URL } from "@/utils/config";
+
 const passwordSchema = z
   .object({
     password: z
@@ -66,7 +68,7 @@ export default function ChangePasswordModal({
   const onSubmit = async (values: PasswordFormType) => {
     try {
       const response = await axios.post(
-        "https://24cf-103-240-169-156.ngrok-free.app/api/v1/startup/auth/change-password/",
+        `${BASE_URL}/api/v1/startup/auth/change-password/`,
         values,
         {
           headers: {

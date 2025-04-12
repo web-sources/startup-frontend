@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import ForgotPasswordModal from "./ForgotPasswordModal";
+import { BASE_URL } from "@/utils/config";
 
 // Zod schema for validation
 const formSchema = z.object({
@@ -43,7 +44,7 @@ export default function LoginPage() {
     if (accessToken) {
       router.push("/home");
     }
-  }, [accessToken]);
+  }, [accessToken, router]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -60,7 +61,7 @@ export default function LoginPage() {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       const response = await axios.post(
-        "https://24cf-103-240-169-156.ngrok-free.app/api/v1/startup/auth/login/",
+        `${BASE_URL}/api/v1/startup/auth/login/`,
         data,
         {
           headers: {
